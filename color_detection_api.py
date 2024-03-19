@@ -5,30 +5,31 @@ from collections import Counter
 
 app = Flask(__name__)
 
-COLOR_VALUES = {
-    'red': ([0, 255, 255]),
-    'green': ([60, 255, 255]),
-    'blue': ([120, 255, 255]),
-    'yellow': ([30, 255, 255]),
-    'orange': ([15, 255, 255]),
-    'purple': ([150, 255, 255]),
-    'pink': ([170, 255, 255]),
-    'cyan': ([90, 255, 255]),
-    'brown': ([10, 255, 165]),
-    'white': ([0, 0, 255]),
-    'black': ([0, 0, 0]),
-    'gray': ([0, 0, 128]),
-    'light_blue': ([100, 255, 255]),
-    'magenta': ([140, 255, 255]),
-    'lime': ([70, 255, 255]),
-    'olive': ([40, 255, 128]),
-    'maroon': ([0, 255, 128]),
-    'teal': ([80, 255, 128]),
-    'navy': ([120, 255, 128]),
-    'sky_blue': ([120, 255, 255]),
-    'violet': ([170, 255, 128]),
-    'indigo': ([100, 255, 128]),
+COLOR_RANGES = {
+    'red': ([0, 100, 100], [10, 255, 255]),
+    'green': ([36, 25, 25], [86, 255, 255]),
+    'blue': ([100, 150, 0], [140, 255, 255]),
+    'yellow': ([20, 100, 100], [30, 255, 255]),
+    'orange': ([10, 100, 100], [20, 255, 255]),
+    'purple': ([130, 50, 50], [170, 255, 255]),
+    'pink': ([140, 100, 100], [170, 255, 255]),
+    'cyan': ([90, 100, 100], [110, 255, 255]),
+    'brown': ([0, 50, 50], [20, 255, 255]),
+    'white': ([0, 0, 200], [180, 25, 255]),
+    'black': ([0, 0, 0], [180, 255, 30]),
+    'gray': ([0, 0, 80], [180, 40, 200]),
+    'light_blue': ([90, 50, 50], [130, 255, 255]),
+    'magenta': ([130, 100, 100], [170, 255, 255]),
+    'lime': ([40, 100, 100], [70, 255, 255]),
+    'olive': ([20, 50, 50], [40, 255, 255]),
+    'maroon': ([0, 100, 50], [10, 255, 200]),
+    'teal': ([80, 100, 50], [100, 255, 200]),
+    'navy': ([100, 100, 50], [140, 255, 200]),
+    'sky_blue': ([100, 50, 50], [130, 255, 255]),
+    'violet': ([130, 50, 50], [170, 255, 200]),
+    'indigo': ([100, 100, 0], [140, 255, 100]),
 }
+
 
 
 @app.route('/')
@@ -48,22 +49,23 @@ def detect_color():
     # Convert image to HSV
     img_hsv = cv2.cvtColor(img, cv2.COLOR_BGR2HSV)
 
-    # Initialize a dictionary to store the distance for each color
-    color_distances = {}
+    # Initialize a dictionary to store the count of pixels for each color
+    color_counts = {color_name: 0 for color_name in COLOR_RANGES}
 
-    # Loop through each color value and calculate distance
-    for color_name, hsv_value in COLOR_VALUES.items():
-        # Convert HSV value to numpy array
-        hsv_value = np.array([hsv_value])
-        # Calculate distance using Euclidean distance formula
-        distance = np.linalg.norm(img_hsv - hsv_value, axis=-1)
-        # Store the mean distance
-        color_distances[color_name] = np.mean(distance)
+    # Loop through each color range and count pixels
+    for color_name, (lower, upper) in COLOR_RANGES.items():
+        mask = cv2.inRange(img_hsv, np.array(lower), np.array(upper))
+        color_counts[color_name] = cv2.countNonZero(mask)
 
-    # Select the color with the minimum distance
-    dominant_color = min(color_distances, key=color_distances.get)
+    # Select the color with the highest pixel count
+    dominant_color = max(color_counts, key=color_counts.get)
+
+    # If no color has a significant pixel count, return 'Can't detect color'
+    if color_counts[dominant_color] < 1000:
+        dominant_color = "Can't detect color"
 
     return jsonify({'color': dominant_color})
+
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5000)
