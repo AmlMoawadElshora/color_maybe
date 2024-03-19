@@ -2,4 +2,3 @@ gunicorn
 Flask
 numpy
 opencv-python
-collections
