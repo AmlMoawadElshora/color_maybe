@@ -8,7 +8,27 @@ COLOR_RANGES = {
     'red': (np.array([0, 100, 100]), np.array([10, 255, 255])),
     'green': (np.array([36, 25, 25]), np.array([86, 255, 255])),
     'blue': (np.array([100, 150, 0]), np.array([140, 255, 255])),
+    'yellow': (np.array([20, 100, 100]), np.array([30, 255, 255])),
+    'orange': (np.array([10, 100, 100]), np.array([20, 255, 255])),
+    'purple': (np.array([130, 50, 50]), np.array([170, 255, 255])),
+    'pink': (np.array([140, 100, 100]), np.array([170, 255, 255])),
+    'cyan': (np.array([90, 100, 100]), np.array([110, 255, 255])),
+    'brown': (np.array([0, 50, 50]), np.array([20, 255, 255])),
+    'white': (np.array([0, 0, 200]), np.array([180, 25, 255])),
+    'black': (np.array([0, 0, 0]), np.array([180, 255, 30])),
+    'gray': (np.array([0, 0, 80]), np.array([180, 40, 200])),
+    'light_blue': (np.array([90, 50, 50]), np.array([130, 255, 255])),
+    'magenta': (np.array([130, 100, 100]), np.array([170, 255, 255])),
+    'lime': (np.array([40, 100, 100]), np.array([70, 255, 255])),
+    'olive': (np.array([20, 50, 50]), np.array([40, 255, 255])),
+    'maroon': (np.array([0, 100, 50]), np.array([10, 255, 200])),
+    'teal': (np.array([80, 100, 50]), np.array([100, 255, 200])),
+    'navy': (np.array([100, 100, 50]), np.array([140, 255, 200])),
+    'sky_blue': (np.array([100, 50, 50]), np.array([130, 255, 255])),
+    'violet': (np.array([130, 50, 50]), np.array([170, 255, 200])),
+    'indigo': (np.array([100, 100, 0]), np.array([140, 255, 100])),
 }
+
 
 @app.route('/')
 def upload_form():
