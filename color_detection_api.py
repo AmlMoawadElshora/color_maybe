@@ -54,10 +54,12 @@ def detect_color():
         mask = cv2.inRange(img_hsv, lower, upper)
         color_counts[color_name] = cv2.countNonZero(mask)
 
-    # Select the color with the highest pixel count
-    dominant_color = color_counts.most_common(1)[0][0]
+    # Define a threshold for minimum number of pixels to consider a color dominant
+    threshold = 1000
+
+    # Select the color with the highest pixel count if it meets the threshold
+    dominant_color = color_counts.most_common(1)[0][0] if color_counts.most_common(1)[0][1] >= threshold else "Can't detect color"
 
     return jsonify({'color': dominant_color})
-
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5000)
