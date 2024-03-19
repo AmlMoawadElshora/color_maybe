@@ -1,6 +1,7 @@
 from flask import Flask, request, jsonify, render_template
 import cv2
 import numpy as np
+from collections import Counter
 
 app = Flask(__name__)
 
@@ -34,8 +35,8 @@ COLOR_RANGES = {
 def upload_form():
     return render_template('upload_form.html')
 
-@app.route('/detect_colors', methods=['POST'])
-def detect_colors():
+@app.route('/detect_color', methods=['POST'])
+def detect_color():
     # Get the image file from the request
     image_file = request.files['image']
 
@@ -45,15 +46,18 @@ def detect_colors():
     # Convert image to HSV
     img_hsv = cv2.cvtColor(img, cv2.COLOR_BGR2HSV)
 
-    # Detect colors
-    colors = []
+    # Initialize a Counter to count pixels for each color
+    color_counts = Counter()
+
+    # Loop through each color range and count pixels
     for color_name, (lower, upper) in COLOR_RANGES.items():
         mask = cv2.inRange(img_hsv, lower, upper)
-        count = cv2.countNonZero(mask)
-        if count > 0:
-            colors.append(color_name)
+        color_counts[color_name] = cv2.countNonZero(mask)
 
-    return jsonify({'colors': colors})
+    # Select the color with the highest pixel count
+    dominant_color = color_counts.most_common(1)[0][0]
+
+    return jsonify({'color': dominant_color})
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5000)
